@@ -26,7 +26,6 @@
         letter-spacing: 2px;
     }
 
-    /* Naprawa pól formularza */
     .form-control {
         background-color: #0b0c10 !important; /* Głęboka czerń */
         border: 1px solid #45a29e !important; /* Subtelny morski/szary */
@@ -51,7 +50,6 @@
         transform: translateY(-2px);
     }
 
-    /* Poprawa widoczności listy zalet */
     ul li {
         color: #ffffff;
         margin-bottom: 10px;
@@ -104,14 +102,12 @@
                         </ul>
                     </div>
                     <div class="col-md-7">
-                        <!-- DODANO: method="POST" -->
                         <form id="reservation-form" method="POST" class="bg-dark p-4 rounded-3 border border-secondary">
-                            {% csrf_token %} <!-- DODANO: Token bezpieczeństwa -->
+                            {% csrf_token %} 
                             
                             <div class="mb-3">
                                 <label class="text-accent small fw-bold">Data wydarzenia</label>
                                 <div class="input-group">
-                                    <!-- DODANO: name="date" -->
                                     <input type="text" name="date" id="flatpickr-input" class="form-control bg-dark text-white border-secondary" placeholder="Wybierz termin..." readonly required>
                                     <button class="btn btn-outline-warning" type="button" id="btn-trigger-cal">📅</button>
                                 </div>
@@ -119,7 +115,6 @@
                             
                             <div class="mb-3">
                                 <label class="text-accent small fw-bold">Twoje dane kontaktowe</label>
-                                <!-- DODANO: name="email" oraz name="phone" -->
                                 <input type="email" name="email" class="form-control bg-dark text-white border-secondary mb-2" placeholder="Twój e-mail" required>
                                 <input type="tel" name="phone" class="form-control bg-dark text-white border-secondary" placeholder="Numer telefonu" required>
                             </div>
@@ -143,16 +138,13 @@
 
 <script>
     $(function() {
-        // Skrypt autocomplete możesz zostawić lub usunąć, 
-        // skoro zrezygnowałaś z pola wyboru filmu.
+        
     });
 
     document.addEventListener('DOMContentLoaded', function() {
         const fp = flatpickr("#flatpickr-input", {
             locale: "pl",
             dateFormat: "Y-m-d",
-            // USUNIĘTO onChange z przekierowaniem!
-            // Dzięki temu strona się nie przeładuje i dane nie znikną.
             static: true, // Kalendarz nie będzie "pływał" nad polami email/tel
         });
 

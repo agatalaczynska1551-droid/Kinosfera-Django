@@ -52,7 +52,6 @@
         {% for movie in page_obj %}
             <div class="col">
                 <div class="card h-100 bg-dark border-secondary shadow-sm hvr-grow" style="transition: transform .2s;">
-                    <!-- Plakat filmu -->
                     <img src="{{ movie.get_poster_url }}" 
                          class="card-img-top" 
                          alt="{{ movie.title }}"
@@ -112,10 +111,9 @@
 </div>
 
 <style>
-    /* Opcjonalny efekt po najechaniu na kartę filmu */
     .card:hover {
         transform: scale(1.03);
-        border-color: #ffc107 !important; /* kolor warning */
+        border-color: #ffc107 !important; 
     }
 </style>
 {% endblock %}

@@ -104,7 +104,6 @@
                                 Premiera: {{ movie.premiere_date|date:"d.m.Y" }}
                             </p>
                             <p class="text-info small">
-                                {# Obliczy różnicę w dniach między dziś a premierą #}
                                 Już za {{ movie.premiere_date|timeuntil }}
                             </p>
 
@@ -127,30 +126,6 @@
 
     <section class="mb-5">
         <h2 class="text-center text-uppercase my-4" style="color: #ff8c00;">Dzisiaj gramy</h2>
-
-         {% comment %} <div class="container mb-5">
-            <div class="d-flex justify-content-center gap-3 overflow-auto py-3 px-2" style="scrollbar-width: none;">
-            <!-- Przycisk "Wszystkie" -->
-                <a href="{% url 'movie_list' %}" class="btn-date">
-                    <span>Wszystkie</span>
-                </a>
-
-                {% for day in days_range %}
-                    <a href="{% url 'movie_list' %}?date={{ day.full_date }}" 
-                        class="btn-date {% if selected_date == day.full_date %}active{% endif %}">
-                        <small>{{ day.day_name }}</small>
-                        <strong>{{ day.day_num }}</strong>
-                    </a>
-                {% endfor %}
-
-                <!-- Ikona pełnego kalendarza -->
-                <button id="fullCalBtn" class="btn-date-circle">
-                    <i class="bi bi-calendar3"></i>
-                </button>
-            </div>
-        </div>
-
-        <input type="hidden" id="hiddenCalInput">    {% endcomment %}
 
         <div class="row">
             {% for movie in page_obj %}
@@ -207,19 +182,5 @@
         </div>
     </section>
 </main>
-
-{% comment %} <link rel="stylesheet" href="https://jsdelivr.net">
-<script src="https://jsdelivr.net"></script>
-<script src="https://npmcdn.com"></script> {% endcomment %}
-
-{% comment %} <script>
-    flatpickr("#fullCalBtn", {
-        locale: "pl",
-        dateFormat: "Y-m-d",
-        onChange: function(selectedDates, dateStr) {
-            window.location.href = "{% url 'movie_list' %}?date=" + dateStr;
-        }
-    });
-</script> {% endcomment %}
 
 {% endblock %}

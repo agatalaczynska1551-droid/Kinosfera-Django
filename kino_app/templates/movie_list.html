@@ -195,14 +195,12 @@
             padding: 10px 20px !important;
         }
 
-        /* Wygląd po najechaniu lub wybraniu */
         .ui-menu-item-wrapper:hover,
         .ui-state-active {
-            background-color: #c46935 !important; /* Twój pomarańczowy */
+            background-color: #c46935 !important; 
             color: #ffffff !important;
         }
 
-        /* Ukrycie dodatkowych ramek widgetu */
         .ui-widget.ui-widget-content {
             border: 1px solid #c46935 !important;
         }
@@ -235,8 +233,7 @@
                 {% endif %}
             </div>
         </div>
-        
-      
+             
 
         <div class="text-center mb-4">
             {% if request.GET.q %}
@@ -257,7 +254,6 @@
 
 
         <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
-         <!-- Przycisk powrotu do wszystkich filmów -->
             <a href="{% url 'movie_list' %}" 
                 class="btn {% if not selected_genre %}btn-warning{% else %}btn-outline-warning{% endif %} rounded-pill">
                 Wszystkie
@@ -273,7 +269,7 @@
             </div>
 
         <div class="calendar-container">
-            <!-- WERSJA 1: INTERAKTYWNA OŚ -->
+            <!--  INTERAKTYWNA OŚ -->
             <div class="timeline">
                 <a href="?{% if request.GET.q %}q={{ request.GET.q }}{% endif %}" 
                     class="date-item {% if not selected_date %}active{% endif %}">
@@ -292,7 +288,7 @@
 
             <div class="text-accent fs-4">|</div>
 
-            <!-- WERSJA 2: PEŁNY KALENDARZ (Flatpickr) -->
+            <!--  PEŁNY KALENDARZ (Flatpickr) -->
             <button type="button" class="btn-full-cal" id="btn-trigger" title="Wybierz inną datę">
                 <i class="bi bi-calendar3"></i>
             </button>
@@ -309,7 +305,6 @@
         <div class="row">
             {% for movie in movies %}
                 <div class="col-12 col-md-6 col-lg-4 mb-4">
-                    <!-- PLAKAT -->
                     <div class="card movie-card shadow-lg">
                         <img src="{{ movie.get_poster_url }}" 
                             class="card-img-top" 
@@ -369,7 +364,7 @@
                     <p class="lead text-muted">Brak filmów w bazie danych.</p>
                 </div>
             {% endfor %}
-        </div> <!-- KONIEC WIERSZA Z FILMAMI -->
+        </div> 
 
         <!-- PAGINACJA  -->
         {% if movies.has_other_pages %}
@@ -430,10 +425,10 @@
         const fp = flatpickr("#flatpickr-input", {
             locale: "pl",
             dateFormat: "Y-m-d",
-            // To jest kluczowe - funkcja uruchamia się po kliknięciu w dzień
+            
             onChange: function(selectedDates, dateStr) {
                 if (dateStr) {
-                    console.log("Wybrano datę: " + dateStr); // Sprawdź to w F12
+                    console.log("Wybrano datę: " + dateStr); 
                     
                     // Budujemy nowy adres URL
                     const url = new URL(window.location.href);
@@ -462,7 +457,7 @@
         dateFormat: "Y-m-d",
         minDate: "today",
         onChange: function(selectedDates, dateStr) {
-            // Po wybraniu daty przeładuj stronę z nowym parametrem
+            
             window.location.href = "?date=" + dateStr;
         }
     });

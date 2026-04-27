@@ -34,7 +34,6 @@ urlpatterns = [
     path("movie_reviews/", views.movie_reviews, name="movie_reviews"),
     path("add_review/", views.add_review, name="add_review"),
     path('movie/<int:movie_id>/add_review/', views.add_review, name='add_review'),
-    path("all_reservations/", views.all_reservations, name="all_reservations"),
     path("my_reservations/", views.my_reservations, name="my_reservations"),
     path("accounts/", include("django.contrib.auth.urls")),
     path('reservation/<int:seans_id>/', views.reservation_page, name='reservation_page'),
@@ -46,7 +45,5 @@ urlpatterns = [
     path('dla-dzieci/', views.for_kids, name='for_kids'),
     path('auto_research/', views.auto_research, name='auto_research'),
     path('rezerwacja-sali/', views.private_room, name='private_room'),
-    
-    # path('get_hours_for_school/', views.get_hours_for_school, name='get_hours_for_school'),
     path('premiere_detail/<int:movie_id>/', views.premiere_detail, name='premiere_detail'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

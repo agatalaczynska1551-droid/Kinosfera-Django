@@ -162,11 +162,11 @@
         const totalQty = qtyAdult + qtyStudent;
         const totalPrice = (qtyAdult * priceAdult) + (qtyStudent * priceStudent);
 
-        // Aktualizacja tekstów
+        
         document.getElementById('counter-text').innerText = `Wybrano miejsc na mapie: ${selectedSeatsCount} | Przypisano biletów: ${totalQty}`;
         document.getElementById('total-price').innerText = `Suma: ${totalPrice} zł`;
 
-        // Walidacja: czy liczba biletów zgadza się z zaznaczonymi fotelami
+        
         const btn = document.querySelector('button[type="submit"]');
         const alertText = document.getElementById('alert-text');
 

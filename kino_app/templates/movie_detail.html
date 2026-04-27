@@ -4,7 +4,6 @@
 <style>
     body { background-color: #0b0c10 !important; color: #ffffff; }
     
-    /* Nagłówek z efektem tła */
     .movie-banner {
         padding: 80px 0;
         border-bottom: 2px solid #c46935;
@@ -23,7 +22,6 @@
     .text-cyan { color: #66fcf1; }
     .text-accent { color: #c46935; }
 
-    /* Styl kafli z godzinami seansów */
     .seans-button {
         background: rgba(102, 252, 241, 0.1);
         border: 1px solid #45a29e;
@@ -49,14 +47,11 @@
         color: #c46935;
     }
 
-    /* Pomarańczowa ramka wokół rolki */
     .obsada-wrapper {
         border: 2px solid #c46935; 
         border-radius: 15px;
         background: rgba(231, 76, 60, 0.05); 
     }
-
-    /* Stylizacja paska przewijania - pogrubiony */
 
      .obsada-wrapper div::-webkit-scrollbar {
         height: 14px; /* Zwiększona grubość paska */
@@ -71,7 +66,7 @@
     .obsada-wrapper div::-webkit-scrollbar-thumb {
         background: #c46935;
         border-radius: 10px;
-        border: 3px solid rgba(0, 0, 0, 0); /* Dodaje "oddech" wokół suwaka */
+        border: 3px solid rgba(0, 0, 0, 0); 
         background-clip: padding-box;
     }
 
@@ -93,12 +88,12 @@
 <div class="movie-banner">
     <div class="container">
         <div class="row align-items-center">
-            <!-- Lewa strona: Plakat -->
+            <!--  Plakat -->
             <div class="col-lg-4 text-center mb-5 mb-lg-0">
                 <img src="{{ movie.get_poster_url }}" class="img-fluid poster-large shadow-lg" alt="{{ movie.title }}">
             </div>
 
-            <!-- Prawa strona: Informacje -->
+            <!--  Informacje -->
             <div class="col-lg-8 ps-lg-5">
                 <h1 class="display-3 fw-bold text-uppercase mb-2" style="letter-spacing: 5px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">
                     {{ movie.title }}
@@ -141,7 +136,7 @@
     </div>
 
     <div class="row">
-        <!-- 1. Obsada na samej górze w pomarańczowej ramce -->
+        
         <div class="col-12 mb-5">
             <span class="info-label d-block text-center mb-3" style="letter-spacing: 2px;">OBSADA</span>
             <div class="obsada-wrapper">
@@ -163,9 +158,8 @@
             </div>
         </div>
 
-        <!-- 3. Reżyseria i Premiera pod spodem PO PRAWEJ STRONIE -->
         <div class="col-md-6 offset-md-6 text-end pe-4">
-            <div class="mb-4 border-end border-danger pe-3"> <!-- Linia z prawej strony -->
+            <div class="mb-4 border-end border-danger pe-3"> 
                 <span class="info-label d-block mb-1" style="font-size: 0.75rem; color: #c46935;">REŻYSERIA</span>
                 <span class="text-white fs-5">{{ movie.directors.name }} {{ movie.directors.surname }}</span>
             </div>
