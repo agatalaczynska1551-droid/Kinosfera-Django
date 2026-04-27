@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .card-kids {
+        background-color: #1f2833;
+        border: 1px solid #c46935;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(196, 105, 53, 0.1);
+    }
+    
+    /* Kolory tekstów */
+    .text-cyan { color: #66fcf1; }
+    .text-accent { color: #c46935; }
+    
+    /* Stylizacja małych kart (Urodziny, Wynajem, Atrakcje) */
+    .service-card {
+        background-color: #1f2833;
+        border: 1px solid #45a29e;
+        border-radius: 12px;
+        transition: 0.3s;
+    }
+    .service-card:hover {
+        transform: translateY(-5px);
+        border-color: #66fcf1;
+        box-shadow: 0 5px 15px rgba(102, 252, 241, 0.2);
+    }
+
+    /* Przycisk pasujący do reszty strony */
+    .btn-kids {
+        background-color: #c46935;
+        color: white;
+        font-weight: bold;
+        border: none;
+        transition: 0.3s;
+    }
+    .btn-kids:hover {
+        background-color: #a3562a;
+        color: #ffffff;
+        transform: scale(1.02);
+    }
+</style>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold" style="color: #c46935;">🎈 Kino dla Dzieci 🍿</h1>
+        <p class="lead text-info">Najlepsze urodziny i przygody w Kinosferze!</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <!-- Opcja 1 -->
+        <div class="col-md-4">
+            <div class="card h-100 bg-dark border-info text-white p-3 text-center">
+                <h3>🎂 Urodziny</h3>
+                <p>Seans, popcorn, napoje i rezerwacja loży dla gości.</p>
+            </div>
+        </div>
+        <!-- Opcja 2 -->
+        <div class="col-md-4">
+            <div class="card h-100 bg-dark border-info text-white p-3 text-center">
+                <h3>📽️ Wynajem</h3>
+                <p>Cała sala tylko dla Was! Wybierzcie swój ulubiony film.</p>
+            </div>
+        </div>
+        <!-- Opcja 3 -->
+        <div class="col-md-4">
+            <div class="card h-100 bg-dark border-info text-white p-3 text-center">
+                <h3>🎨 Atrakcje</h3>
+                <p>Zwiedzanie kabiny projekcyjnej i warsztaty animacji.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card card-kids p-4 shadow-lg text-white">
+                <h2 class="text-center mb-4">Zapytaj o wolny termin</h2>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-info">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-kids w-100 py-3 mt-3">WYŚLIJ ZGŁOSZENIE ✨</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

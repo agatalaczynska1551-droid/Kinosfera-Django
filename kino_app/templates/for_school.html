@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    body { background-color: #0b0c10 !important; color: #ffffff; }
+    .text-cyan { color: #66fcf1; }
+    .text-accent { color: #c46935; }
+    
+    /* Style dla formularza */
+    .card-school {
+        background-color: #1f2833;
+        border: 1px solid #c46935;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(196, 105, 53, 0.2);
+    }
+    .form-control:focus {
+        background-color: #1f2833;
+        color: white;
+        border-color: #66fcf1;
+        box-shadow: 0 0 10px rgba(102, 252, 241, 0.5);
+    }
+    .btn-reserve {
+        background-color: #c46935;
+        border: none;
+        color: white;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .btn-reserve:hover {
+        background-color: #a3562a;
+        transform: scale(1.02);
+        color: white;
+    }
+</style>
+
+<div class="container py-5">
+    <!-- Nagłówek -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 fw-bold text-accent">Oferta dla Szkół</h1>
+            <p class="lead text-cyan">Zorganizuj niezapomniany seans edukacyjny w Kinosferze</p>
+            <div class="dropdown-divider border-secondary w-50 mx-auto"></div>
+        </div>
+    </div>
+
+    <div class="row g-5">
+        <!-- Sekcja Informacyjna -->
+        <div class="col-lg-5">
+            <h3 class="text-cyan mb-4">Dlaczego my?</h3>
+            <div class="mb-4">
+                <h5 class="text-accent">🎟️ Ceny grupowe</h5>
+                <p>Specjalne zniżki dla grup powyżej 15 osób. Bilety już od 15 zł!</p>
+            </div>
+            <div class="mb-4">
+                <h5 class="text-accent">👨‍🏫 Opiekunowie za 0 zł</h5>
+                <p>Na każdą grupę 15 uczniów, jeden bilet dla opiekuna jest całkowicie bezpłatny.</p>
+            </div>
+            <div class="mb-4">
+                <h5 class="text-accent">⏰ Elastyczne godziny</h5>
+                <p>Możemy zorganizować seans poranny specjalnie dla Waszej szkoły, nawet poza regularnym repertuarem.</p>
+            </div>
+        </div>
+
+        <!-- Sekcja Formularza -->
+        <div class="col-lg-7">
+            <div class="card card-school p-4">
+                <h4 class="mb-4 text-center text-white">Formularz zgłoszeniowy</h4>
+                
+                <!-- Komunikaty sukcesu -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-success bg-success text-white border-0">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST" action="{% url 'for_school' %}">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label text-cyan small fw-bold">{{ field.label }}</label>
+                            {{ field }}
+
+
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ field.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" name="submit_reservation" class="btn btn-reserve w-100 py-2 mt-3">
+                    WYŚLIJ ZAPYTANIE
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src=" https://cdn.jsdelivr.net/npm/jqueryui@1.11.1/jquery-ui.min.js "></script>
+<link href=" https://cdn.jsdelivr.net/npm/jqueryui@1.11.1/jquery-ui.min.css " rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+<script>
+    $(function() {
+        // Skrypt autocomplete możesz zostawić lub usunąć, 
+        // skoro zrezygnowałaś z pola wyboru filmu.
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const fp = flatpickr("#flatpickr-input", {
+            locale: "pl",
+            dateFormat: "Y-m-d",
+            static: true, // Kalendarz nie będzie "pływał" nad polami email/tel
+        });
+
+        const trigger = document.getElementById('btn-trigger-cal');
+        if (trigger) {
+            trigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                fp.open();
+            });
+        }
+    });
+</script>
+{% endblock content %}

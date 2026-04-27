@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    body {
+        background: radial-gradient(circle, #1f2833 0%, #0b0c10 100%) !important;
+        color: #ffffff !important;
+        min-height: 100vh;
+    }
+
+    .card-body h4, .fw-bold {
+        color: #ffffff !important;
+    }
+    .text-muted.small{
+        color: #c46935 !important;
+    }
+
+    .badge.bg-secondary {
+        background-color: #c46935 !important;
+        color: #0b0c10 !important;
+        padding: 8px 12px;
+    }
+
+    .btn-outline-light {
+        border-color: #c46935 !important;
+        color: #c46935 !important;
+    }
+
+    .btn-outline-light:hover {
+        background-color: #c46935 !important;
+        color: #0b0c10 !important;
+    }
+</style>
+
+<div class="container py-5 text-center">
+    <div class="card bg-dark border-secondary shadow-lg mx-auto" style="max-width: 500px; border-radius: 20px; overflow: hidden;">
+        <div class="p-4" style="background-color: #c46935; color: #0b0c10;">
+            <i class="bi bi-check-circle-fill fs-1"></i>
+            <h2 class="fw-bold mt-2">REZERWACJA UDANA!</h2>
+            <p class="mb-0 small text-uppercase fw-bold">KinoSfera | Bilet elektroniczny</p>
+        </div>
+
+        
+        <div class="card-body p-4 text-start">
+            <h4 class="text-accent mb-3 text-center border-bottom border-secondary pb-2">
+                {{ seans.movie.title }}
+            </h4>
+            
+            <div class="row mb-4">
+                <div class="col-6">
+                    <p class="text-muted small mb-0 text-uppercase">Data i godzina</p>
+                    <p class="fw-bold">{{ seans.start_time|date:"d.m.Y H:i" }}</p>
+                </div>
+                <div class="col-6 text-end">
+                    <p class="text-muted small mb-0 text-uppercase">Sala</p>
+                    <p class="fw-bold">{{ seans.room_number|default:"Główna" }}</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-3" style="background: rgba(196, 105, 53, 0.1); border: 1px dashed #c46935;">
+                <p class="text-muted small mb-1 text-uppercase">Twoje miejsca:</p>
+                <h5 class="mb-0 text-white">
+                    {% for s in seats %}
+                        <span class="badge bg-secondary me-1"> {{ s }}</span>
+                    {% endfor %}
+                </h5>
+            </div>
+            
+            <div class="text-center mt-4">
+                <i class="bi bi-qr-code text-white" style="font-size: 80px; opacity: 0.8;"></i>
+                <p class="text-muted small mt-2">Pamiętaj, aby pokazać bilet przy wejściu do sali</p>
+            </div>
+        </div>
+
+       
+        <div class="card-footer border-top border-secondary p-3">
+            <a href="{% url 'movie_list' %}" class="btn btn-outline-light w-100 rounded-pill">
+                Wróć do repertuaru
+            </a>
+
+        </div>
+    </div>
+    
+    <p class="text-muted mt-4 small">
+        Bilet znajdziesz w zakładce <strong>Moje Bilety</strong>.
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 50px auto; padding: 20px; background: #1a1a1a; color: white; border-radius: 8px; border: 1px solid #333; text-align: center;">
+    <h2 style="color: #ff9800;">Brak dostępu</h2>
+    <p>Aby zarezerwować bilet, musisz być zalogowany w systemie <strong>Kinosfera</strong>.</p>
+    
+    <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+
+    <form method="post" style="display: flex; flex-direction: column; gap: 15px;">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+            <p style="color: #ff5252;">Błędny login lub hasło. Spróbuj ponownie.</p>
+        {% endif %}
+
+        <div style="text-align: left;">
+            {{ form.username.label_tag }}<br>
+            <input type="text" name="username" style="width: 100%; padding: 8px; background: #333; border: 1px solid #444; color: white; border-radius: 4px;">
+        </div>
+
+        <div style="text-align: left;">
+            {{ form.password.label_tag }}<br>
+            <input type="password" name="password" style="width: 100%; padding: 8px; background: #333; border: 1px solid #444; color: white; border-radius: 4px;">
+        </div>
+
+        <button type="submit" style="background: #ff9800; color: black; border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 10px;">
+            Zaloguj się i kup bilet
+        </button>
+    </form>
+
+    <p style="margin-top: 20px; font-size: 0.9em;">
+        Nie masz konta? <a href="{% url 'register' %}" style="color: #ff9800;">Zarejestruj się tutaj</a>
+    </p>
+</div>
+{% endblock %}

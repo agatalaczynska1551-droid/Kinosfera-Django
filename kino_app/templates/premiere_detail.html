@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    body { background-color: #0b0c10 !important; color: #ffffff; }
+    
+    /* Nagłówek z efektem tła */
+    .movie-banner {
+        padding: 80px 0;
+        border-bottom: 2px solid #c46935;
+        background: linear-gradient(90deg, #0b0c10 30%, rgba(11, 12, 16, 0.7) 100%);
+        position: relative;
+    }
+
+    .poster-large {
+        border-radius: 15px;
+        border: 1px solid #45a29e;
+        box-shadow: 0 0 30px rgba(102, 252, 241, 0.3);
+        max-height: 550px;
+        transition: 0.3s;
+    }
+
+    .text-cyan { color: #66fcf1; }
+    .text-accent { color: #c46935; }
+
+    /* Styl kafli z godzinami seansów */
+    .seans-button {
+        background: rgba(102, 252, 241, 0.1);
+        border: 1px solid #45a29e;
+        color: #66fcf1;
+        text-decoration: none;
+        transition: 0.3s;
+        min-width: 110px;
+        border-radius: 12px;
+    }
+
+    .seans-button:hover {
+        background: #45a29e;
+        color: #0b0c10;
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(102, 252, 241, 0.4);
+    }
+
+    .info-label {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        color: #c46935;
+    }
+
+    /* Pomarańczowa ramka wokół rolki */
+    .obsada-wrapper {
+        border: 2px solid #c46935; 
+        border-radius: 15px;
+        background: rgba(231, 76, 60, 0.05); 
+    }
+
+    /* Stylizacja paska przewijania - pogrubiony */
+
+     .obsada-wrapper div::-webkit-scrollbar {
+        height: 14px; /* Zwiększona grubość paska */
+    }
+
+    .obsada-wrapper div::-webkit-scrollbar-track {
+        background: rgba(196, 105, 53, 0.05); /* Tło szyny paska */
+        border-radius: 10px;
+        margin: 0 15px; /* Odstęp paska od zaokrąglonych rogów ramki */
+    }
+
+    .obsada-wrapper div::-webkit-scrollbar-thumb {
+        background: #c46935;
+        border-radius: 10px;
+        border: 3px solid rgba(0, 0, 0, 0); /* Dodaje "oddech" wokół suwaka */
+        background-clip: padding-box;
+    }
+
+    .obsada-wrapper div::-webkit-scrollbar-thumb:hover {
+        background: #e07a44; /* Rozjaśnienie suwaka przy najechaniu */
+    }
+    /* Efekt dla zdjęć aktorów */
+    .actor-img {
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    .actor-img:hover {
+        transform: scale(1.1);
+        border-color: #c46935;
+    }
+
+</style>
+
+<div class="movie-banner">
+    <div class="container mt-5 text-white">
+    <div class="row">
+        <!-- Lewa kolumna: Plakat -->
+        <div class="col-md-4">
+            {% if movie.poster %}
+                <img src="{{ movie.poster.url }}" class="img-fluid rounded shadow-lg border border-secondary" alt="{{ movie.title }}">
+            {% else %}
+                <div class="bg-secondary d-flex align-items-center justify-content-center rounded" style="height: 500px;">
+                    <p>Brak plakatu</p>
+                </div>
+            {% endif %}
+            
+            <!-- Przycisk zwiastunu pod plakatem -->
+            {% if movie.trailer_url %}
+                <a href="{{ movie.trailer_url }}" class="btn btn-outline-info w-100 mt-3" target="_blank">
+                    Oglądaj Zwiastun
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Prawa kolumna: Szczegóły -->
+        <div class="col-md-8">
+            <h1 class="display-3 fw-bold text-uppercase">{{ movie.title }}</h1>
+            <p class="text-info fs-5">{{ movie.genre }} | 120 MIN</p>
+            
+            <hr class="border-secondary">
+            
+            <h5 class="text-warning text-uppercase small ls-2">Opis Filmu</h5>
+            <p class="lead">{{ movie.description }}</p>
+
+            <div class="mt-5 p-4 bg-dark border border-secondary rounded">
+                <h5 class="text-center text-uppercase border-bottom border-secondary pb-2 mb-4">Informacje dodatkowe</h5>
+                <div class="row text-center">
+                    <div class="col-md-6">
+                        <p class="text-white-50">PREMIERA</p>
+                        <p class="fw-bold">{{ movie.premiere_date }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-white-50">REŻYSERIA</p>
+                        <p class="fw-bold">Matt Reeves</p> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <h3 class="text-white border-bottom border-secondary pb-3 mb-4">
+                <i class="bi bi-chat-dots me-2 text-cyan"></i>Opinie widzów
+            </h3>
+
+            <!-- Formularz dodawania -->
+            {% if user.is_authenticated %}
+                <form action="{% url 'add_review' movie.id %}" method="POST" class="p-4 mb-5 rounded shadow-sm" style="background: rgba(102, 252, 241, 0.03); border: 1px solid #45a29e;">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label text-cyan small fw-bold text-uppercase">Twoja recenzja</label>
+                        <textarea name="comment" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="Napisz kilka słów o filmie..." required></textarea>
+                    </div>
+                    
+                    <div class="d-flex align-items-center gap-4">
+                        <div>
+                            <label class="text-white-50 small d-block mb-1">Ocena</label>
+                            <select name="rating" class="form-select bg-dark text-white border-secondary" style="width: 130px;">
+                                <option value="5">⭐⭐⭐⭐⭐</option>
+                                <option value="4">⭐⭐⭐⭐</option>
+                                <option value="3">⭐⭐⭐</option>
+                                <option value="2">⭐⭐</option>
+                                <option value="1">⭐</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-outline-warning rounded-pill px-5 fw-bold ms-auto mt-auto" style="height: 45px;">
+                            DODAJ OPINIĘ
+                        </button>
+                    </div>
+                </form>
+            {% else %}
+                <div class="alert alert-dark border-secondary text-muted">
+                    Musisz się <a href="{% url 'login' %}" class="text-cyan">zalogować</a>, aby dodać recenzję.
+                </div>
+            {% endif %}
+
+            <!-- Lista recenzji -->
+            <div class="review-list">
+                {% for review in reviews %}
+                    <div class="mb-4 p-3 rounded" style="background: rgba(255, 255, 255, 0.02); border-left: 3px solid #c46935;">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong class="text-accent">{{ review.user.username }}</strong>
+                            <small class="text-muted">{{ review.created_at|date:"d.m.Y" }}</small>
+                        </div>
+                        <div class="mb-2" style="font-size: 0.8rem;">
+                            {% if review.rating == 5 %}⭐⭐⭐⭐⭐{% elif review.rating == 4 %}⭐⭐⭐⭐{% elif review.rating == 3 %}⭐⭐⭐{% elif review.rating == 2 %}⭐⭐{% else %}⭐{% endif %}
+                        </div>
+                        <p class="text-white-50 mb-0">{{ review.comment }}</p>
+                    </div>
+                {% empty %}
+                    <p class="text-white italic">Bądź pierwszą osobą, która oceni ten film!</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

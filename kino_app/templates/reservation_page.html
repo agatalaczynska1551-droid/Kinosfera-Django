@@ -1,0 +1,205 @@
+{% extends 'base.html' %} 
+{% block content %}
+<style>
+    body { background-color: #0b0c10 !important; color: white; }
+    .screen { background: #fff; height: 8px; width: 60%; margin: 20px auto 50px; box-shadow: 0 0 20px #fff; border-radius: 5px; }
+    
+    /* Styl dla checkboxa, który udaje fotel */
+    .seat-container { position: relative; display: inline-block; margin: 3px; }
+    .seat-check { position: absolute; opacity: 0; cursor: pointer; height: 100%; width: 100%; z-index: 2; }
+    .seat-box { 
+        display: flex; align-items: center; justify-content: center;
+        width: 32px; height: 38px; background: #1f2833; 
+        border: 1px solid #c46935; border-radius: 5px 5px 0 0;
+        font-size: 11px; color: #c46935; transition: 0.2s;
+    }
+
+    /* Zmiana koloru po kliknięciu - standardowy CSS */
+    .seat-check:checked + .seat-box {
+        background-color: #c46935 !important;
+        color: white !important;
+        border-color: white;
+    }
+
+    .seat-box.reserved { 
+        background: #2d1313 !important; 
+        border: 1px solid #ff4d4d !important;
+        color: #ff4d4d !important;
+        opacity: 0.8; 
+        cursor: not-allowed; 
+    }
+
+    .legend-container {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        margin: 30px 0;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        color: #ccc;
+    }
+
+    .legend-box {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        border-radius: 4px;
+    }
+
+    .box-available { background: #1f2833; border: 1px solid #c46935; }
+    .box-selected { background: #c46935; border: 1px solid #fff; }
+    .box-reserved { background: #ff4d4d; border: 1px solid #fff; }
+</style>
+
+<div class="container text-center py-5">
+    <h2 class="mb-5">{{ seans.movie.title }}</h2>
+    <div class="screen"></div>
+
+    <form method="POST" action="{% url 'book_seats' seans.id %}">
+        {% csrf_token %}
+        <div class="cinema-hall">
+            {% for r in rows %}
+                <div class="d-flex align-items-center justify-content-center mb-1">
+                    <div class="me-3 small fw-bold text-accent" style="width: 60px;">Rząd {{ r }}</div>
+
+
+                    {% for s in seats_in_row %}
+
+                        {% with row_val=r|slugify seat_val=s|slugify %}
+                        {% with seat_id=row_val|add:"-"|add:seat_val %}
+
+                            <div class="seat-container">
+                                {% if seat_id in reserved_seats %}
+                                    <div class="seat-box reserved" style="background-color: #ff4d4d !important; color: white !important; border-color: white !important;">{{ s }}
+                                    </div>          
+                                         
+                                {% else %}
+                                        {# MIEJSCE WOLNE #}
+                                    <input type="checkbox" name="selected_seats" value="{{ seat_id }}" class="seat-check">
+                                    <div class="seat-box">{{ s }}</div>
+                                {% endif %}
+                            </div>
+                        {% endwith %}
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="legend-container">
+            <div class="legend-item">
+                <div class="legend-box box-available"></div>
+                <span>Wolne</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box box-selected"></div>
+                <span>Twój wybór</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box box-reserved"></div>
+                <span>Zajęte</span>
+            </div>
+        </div>
+        
+        {# CENY BILETOW #}
+
+        <div class="mt-4 p-3 rounded" style="background: rgba(196, 105, 53, 0.1); border: 1px solid #c46935;">
+            <h5 class="text-white mb-3">Rodzaje biletów</h5>
+    
+            <div class="d-flex justify-content-around align-items-center">
+                <!-- Bilety Normalne -->
+                 <div class="text-center">
+                    <p class="mb-1 small">Normalny ({{ ticket_adult }} zł)</p>
+                    <div class="input-group input-group-sm" style="width: 120px;">
+                        <button class="btn btn-outline-warning" type="button" onclick="changeQty('adult', -1)">-</button>
+                        <input type="text" id="qty-adult" class="form-control text-center bg-dark text-white border-warning" value="0" readonly>
+                        <button class="btn btn-outline-warning" type="button" onclick="changeQty('adult', 1)">+</button>
+                    </div>
+                </div>
+
+                <!-- Bilety Studenckie -->
+                <div class="text-center">
+                    <p class="mb-1 small">Studencki ({{ ticket_student }} zł)</p>
+                    <div class="input-group input-group-sm" style="width: 120px;">
+                        <button class="btn btn-outline-warning" type="button" onclick="changeQty('student', -1)">-</button>
+                        <input type="text" id="qty-student" class="form-control text-center bg-dark text-white border-warning" value="0" readonly>
+                        <button class="btn btn-outline-warning" type="button" onclick="changeQty('student', 1)">+</button>
+                    </div>
+                </div>
+
+
+        <p class="mt-3 text-accent fw-bold" id="counter-text">Wybrano miejsc: 0</p>
+        <p class="text-danger small" id="alert-text" style="display:none;">Liczba biletów musi zgadzać się z liczbą miejsc!</p>
+        <h4 class="text-white fw-bold mb-4" id="total-price">Suma: 0 zł</h4>
+
+        <div class="mt-5">
+            <button type="submit" class="btn btn-lg btn-warning rounded-pill px-5 shadow fw-bold">
+                ZAREZERWUJ MIEJSCA
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const checkboxes = document.querySelectorAll('.seat-check');
+    const counterText = document.getElementById('counter-text');
+    const priceAdult = {{ ticket_adult }};
+    const priceStudent = {{ ticket_student }};
+
+
+    function updateSummary() {
+        const selectedSeatsCount = document.querySelectorAll('.seat-check:checked').length;
+        const qtyAdult = parseInt(document.getElementById('qty-adult').value);
+        const qtyStudent = parseInt(document.getElementById('qty-student').value);
+        
+        const totalQty = qtyAdult + qtyStudent;
+        const totalPrice = (qtyAdult * priceAdult) + (qtyStudent * priceStudent);
+
+        // Aktualizacja tekstów
+        document.getElementById('counter-text').innerText = `Wybrano miejsc na mapie: ${selectedSeatsCount} | Przypisano biletów: ${totalQty}`;
+        document.getElementById('total-price').innerText = `Suma: ${totalPrice} zł`;
+
+        // Walidacja: czy liczba biletów zgadza się z zaznaczonymi fotelami
+        const btn = document.querySelector('button[type="submit"]');
+        const alertText = document.getElementById('alert-text');
+
+        if (totalQty === selectedSeatsCount && selectedSeatsCount > 0) {
+            btn.disabled = false;
+            alertText.style.display = 'none';
+        } else {
+            btn.disabled = true;
+            alertText.style.display = 'block';
+        }
+    }
+
+    function changeQty(type, delta) {
+        const input = document.getElementById(`qty-${type}`);
+        let newVal = parseInt(input.value) + delta;
+        if (newVal < 0) newVal = 0;
+        input.value = newVal;
+        updateSummary();
+    }
+
+         // Słuchaj zmian na checkboxach (fotelach)
+        document.querySelectorAll('.seat-check').forEach(box => {
+        box.addEventListener('change', updateSummary);
+    });
+
+    // Inicjalizacja przycisku (na start zablokowany)
+    updateSummary();
+    checkboxes.forEach(box => {
+        box.addEventListener('change', () => {
+            const count = document.querySelectorAll('.seat-check:checked').length;
+            counterText.innerText = `Wybrano miejsc: ${count}`;
+        });
+    });
+</script>
+
+{% endblock %}

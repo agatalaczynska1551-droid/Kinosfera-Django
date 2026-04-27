@@ -1,0 +1,479 @@
+{% extends 'base.html' %} 
+{% block content %}
+{% load static %}
+
+    <title>KinoSfera - Lista Filmów</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://jquery.com">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href=" https://cdn.jsdelivr.net/npm/jqueryui@1.11.1/jquery-ui.min.css " rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src=" https://cdn.jsdelivr.net/npm/jqueryui@1.11.1/jquery-ui.min.js "></script>
+    <script src="https://jquery.com"></script>
+    <script src="https://jquery.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <style>
+        body { 
+            background: radial-gradient(circle, #1f2833 0%, #0b0c10 100%); 
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+        }
+
+        .section-title {
+            color: #c46935;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin: 40px 0;
+            font-weight: bold;
+        }
+
+        .movie-card {
+            background: #1f2833;
+            border: 1px solid #c46935;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .card-text {
+        color: rgba(255, 255, 255, 0.7) !important;
+        font-size: 0.9rem;
+        }
+
+        .info i, .bi {
+        color: #c46935 !important; 
+        margin-right: 8px;
+        font-size: 1.1rem;
+        }
+
+        .text-muted {
+        color: #66fcf1 !important; 
+        opacity: 1 !important;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(196, 105, 53, 0.3);
+        }
+
+        movie-card {
+        transition: all 0.3s ease-in-out;
+        }
+
+        .movie-card img {
+        filter: brightness(0.8); 
+        transition: 0.5s ease;
+        }
+
+        .movie-card:hover {
+        transform: translateY(-10px);
+        }
+
+        .movie-card:hover img {
+        filter: brightness(1.1); 
+        }
+
+
+        .btn-seans {
+            background: transparent;
+            color: #c46935;
+            border: 1px solid #c46935;
+            padding: 8px 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            text-align: center;
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .btn-seans:hover {
+            background: #c46935;
+            color: #0b0c10;
+            font-weight: bold;
+        }
+
+        .btn-seans strong { font-size: 1.1em; display: block; }
+        .btn-seans small { font-size: 0.8em; opacity: 0.8; }
+
+        .text-accent { color: #c46935; }
+
+        .pagination .page-link {
+            background-color: #1f2833;
+            color: #c46935;
+            border-color: #c46935;
+            transition: all 0.3s;
+        }
+
+        .pagination .page-link:hover {
+            background-color: #c46935 !important;
+            color: #0b0c10 !important;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background-color: #0b0c10;
+            color: #c46935;
+            opacity: 0.4;
+        }
+
+        .calendar-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        /* Wersja 1: Oś czasu */
+        .timeline {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0;
+            scrollbar-width: none; /* Ukrywa scroll na Firefox */
+        }
+        .timeline::-webkit-scrollbar { display: none; } /* Ukrywa scroll na Chrome */
+
+        .date-item {
+            background: #1f2833;
+            border: 1px solid #c46935;
+            color: white;
+            border-radius: 12px;
+            padding: 10px;
+            min-width: 65px;
+            text-align: center;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .date-item:hover, .date-item.active {
+            background: #c46935;
+            color: #0b0c10;
+            transform: translateY(-5px);
+        }
+        .date-item .day-n { font-size: 0.7rem; text-transform: uppercase; display: block; opacity: 0.8; }
+        .date-item .day-d { font-size: 1.2rem; font-weight: bold; }
+
+        /* Wersja 2: Pełny kalendarz (Przycisk) */
+        .btn-full-cal {
+            background: #0b0c10;
+            color: #c46935;
+            border: 2px solid #c46935;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-full-cal:hover {
+            background: #c46935;
+            color: #0b0c10;
+            box-shadow: 0 0 15px #c46935;
+        }
+
+         /* Cały kontener listy */
+        .ui-autocomplete {
+            background: #1a2833 !important;
+            border: 1px solid #c46935 !important;
+            border-radius: 8px;
+            padding: 5px 0 !important;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+        }
+
+        /* Wymuszenie tła dla każdego elementu i jego stanów */
+        .ui-menu-item, 
+        .ui-menu-item-wrapper,
+        .ui-widget-content .ui-state-active {
+            background: #1a2833 !important; /* Tło bazowe */
+            color: #ffffff !important;
+            border: none !important;
+            margin: 0 !important;
+            padding: 10px 20px !important;
+        }
+
+        /* Wygląd po najechaniu lub wybraniu */
+        .ui-menu-item-wrapper:hover,
+        .ui-state-active {
+            background-color: #c46935 !important; /* Twój pomarańczowy */
+            color: #ffffff !important;
+        }
+
+        /* Ukrycie dodatkowych ramek widgetu */
+        .ui-widget.ui-widget-content {
+            border: 1px solid #c46935 !important;
+        }
+
+</style>
+
+<body>
+
+    <div class="container py-5">
+        <div class="row mb-5 justify-content-center">
+            <div class="col-md-6" id="autocomplete-container" style="position: relative;">
+                <form action="{% url 'movie_list' %}" method="GET" class="d-flex">
+                    <input type="text" 
+                        id="search-input"
+                        name="q" 
+                        value="{{ request.GET.q|default:'' }}" 
+                        class="form-control bg-dark text-white border-secondary rounded-pill px-4 shadow-sm" 
+                        placeholder="Wpisz tytuł filmu..."
+                        style="border-color: #c46935 !important;">
+                    <button class="btn btn-outline-warning rounded-pill ms-2 px-4" type="submit" style="color: #c46935; border-color: #c46935;">
+                    <i class="bi bi-search"></i> Szukaj
+                    </button>
+                </form>
+                {% if request.GET.q %}
+                    <div class="text-center mt-2">
+                        <a href="{% url 'movie_list' %}" class="small text-muted text-decoration-none">
+                            <i class="bi bi-x-circle"></i> Wyczyść wyniki
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+      
+
+        <div class="text-center mb-4">
+            {% if request.GET.q %}
+                <p class="lead mb-1">
+                    <span style="color: rgba(255,255,255,0.7);">Wyniki dla:</span> 
+                    <strong class="text-accent">"{{ request.GET.q }}"</strong>
+                </p>
+                <span class="badge rounded-pill bg-dark border border-secondary p-2 px-3">
+                    Znaleziono: <span class="text-accent fw-bold">{{ movies.paginator.count }}</span> 
+                    {% if movies.paginator.count == 1 %}film{% elif movies.paginator.count < 5 %}filmy{% else %}filmów{% endif %}
+                </span>
+            {% else %}
+                <span class="text-uppercase fw-bold" style="letter-spacing: 2px; color: #ffffff !important; opacity: 0.8;">
+                     Wszystkie filmy: <span class="text-accent fs-4 ms-2">{{ movies.paginator.count }}</span>
+                </span>
+            {% endif %}
+        </div>
+
+
+        <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+         <!-- Przycisk powrotu do wszystkich filmów -->
+            <a href="{% url 'movie_list' %}" 
+                class="btn {% if not selected_genre %}btn-warning{% else %}btn-outline-warning{% endif %} rounded-pill">
+                Wszystkie
+            </a>
+
+            <!-- Dynamiczne przyciski gatunków -->
+            {% for genre in all_genres %}
+                <a href="?genre={{ genre }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                    class="btn {% if selected_genre == genre %}btn-warning{% else %}btn-outline-warning{% endif %} rounded-pill">
+                    {{ genre }}
+                </a>
+            {% endfor %}
+            </div>
+
+        <div class="calendar-container">
+            <!-- WERSJA 1: INTERAKTYWNA OŚ -->
+            <div class="timeline">
+                <a href="?{% if request.GET.q %}q={{ request.GET.q }}{% endif %}" 
+                    class="date-item {% if not selected_date %}active{% endif %}">
+                    <span class="day-n">Dziś</span>
+                    <span class="day-d"><i class="bi bi-house-door"></i></span>
+                </a>
+        
+                {% for day in days_range %}
+                    <a href="?date={{ day.full_date }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                        class="date-item {% if selected_date == day.full_date %}active{% endif %}">
+                        <span class="day-n">{{ day.day_name }}</span>
+                        <span class="day-d">{{ day.day_num }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+
+            <div class="text-accent fs-4">|</div>
+
+            <!-- WERSJA 2: PEŁNY KALENDARZ (Flatpickr) -->
+            <button type="button" class="btn-full-cal" id="btn-trigger" title="Wybierz inną datę">
+                <i class="bi bi-calendar3"></i>
+            </button>
+            <!-- Zmieniamy typ na 'text', ale ukrywamy go (Flatpickr potrzebuje pola tekstowego) -->
+            <input type="text" id="flatpickr-input" style="opacity: 0; width: 0; height: 0; position: absolute;">
+        </div>
+
+
+        <h1 class="text-center section-title">
+            <i class="bi bi-film"></i> Aktualnie w kinie
+        </h1>
+
+        <!-- POCZĄTEK WIERSZA Z FILMAMI -->
+        <div class="row">
+            {% for movie in movies %}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <!-- PLAKAT -->
+                    <div class="card movie-card shadow-lg">
+                        <img src="{{ movie.get_poster_url }}" 
+                            class="card-img-top" 
+                            alt="{{ movie.title }}" 
+                            style="height: 400px; object-fit: cover; border-bottom: 2px solid #c46935;">
+    
+
+                        <div class="card-body d-flex flex-column">
+                            <h2 class="h4 fw-bold text-accent mb-3">{{ movie.title }}</h2>
+                            <p class="mb-2" style="color: #66fcf1; font-weight: bold; font-size: 0.85rem;">{{ movie.gatunek }}</p>
+                            
+                            <div class="info small mb-3">
+                                <p class="mb-1" style="color: #f5fafa; font-weight: bold; font-size: 0.85rem;">
+                                    <i class="bi bi-person-video2 text-accent"></i> 
+                                    <strong>Reżyser:</strong> {{ movie.directors.name }} {{ movie.directors.surname }}
+                                </p>
+                                <p class="mb-1" style="color: #f5fafa; font-weight: bold; font-size: 0.85rem;">
+                                    <i class="bi bi-calendar-event text-accent"></i> 
+                                    <strong>Premiera:</strong> {{ movie.date_realise|date:"d.m.Y" }}
+                                </p>
+                            </div>
+
+                            <p class="card-text small text-secondary flex-grow-1">
+                                {{ movie.description|truncatewords:20 }}
+                            </p>
+
+                            
+                            <div class="mt-3 mb-3">
+                                <a href="{% url 'movie_detail' movie.id %}" class="btn btn-sm btn-outline-info rounded-pill px-4" style="border-color: #66fcf1; color: #66fcf1;">
+                                    <i class="bi bi-info-circle me-1"></i> WIĘCEJ
+                                </a>
+                            </div>
+                            
+
+                            <div class="seanse-section mt-4">
+                                <p class="mb-1" style="color: #f5fafa; font-weight: bold; font-size: 0.85rem;">
+                                    <i class="bi bi-clock text-accent"></i> Najbliższe seanse:
+                                </p>
+                                <div class="seanse-list d-flex flex-wrap gap-2 mt-auto">
+                                    {% for s in movie.seanses.all|dictsort:"start_time"|slice:":4" %}
+                                        {% if not selected_date or s.start_time|date:"Y-m-d" == selected_date %}
+                                            <a href="{% url 'reservation_page' s.id %}" class="btn-seans">
+                                                <strong>{{ s.start_time|date:"H:i" }}</strong>
+                                                <small>{{ s.start_time|date:"d.m" }}</small>
+                                            </a>
+                                        {% endif %}
+                                    {% empty %}
+                                        <span class="text-muted small">Brak zaplanowanych seansów</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center py-5">
+                    <p class="lead text-muted">Brak filmów w bazie danych.</p>
+                </div>
+            {% endfor %}
+        </div> <!-- KONIEC WIERSZA Z FILMAMI -->
+
+        <!-- PAGINACJA  -->
+        {% if movies.has_other_pages %}
+        <nav aria-label="Nawigacja stronami" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if movies.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&laquo; Pierwsza</a>
+                    </li>
+                    <li class="page-item">
+                         <a class="page-link" href="?page={{ movies.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Poprzednia</a>
+                    </li>
+                {% endif %}
+
+                <li class="page-item disabled">
+                    <span class="page-link bg-dark text-white">
+                        Strona {{ movies.number }} z {{ movies.paginator.num_pages }}
+                    </span>
+                </li>
+
+                {% if movies.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ movies.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Następna</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ movies.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Ostatnia &raquo;</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+
+<!-- Skrypty JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src=" https://cdn.jsdelivr.net/npm/jqueryui@1.11.1/jquery-ui.min.js "></script>
+<link href=" https://cdn.jsdelivr.net/npm/jqueryui@1.11.1/jquery-ui.min.css " rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+<script>
+    $(function() {
+        $("#search-input").autocomplete({
+            source: "{% url 'auto_research' %}",
+            minLength: 2, // podpowiedzi pojawią się po wpisaniu 2 znaków
+            appendTo: "#autocomplete-container", // To przenosi listę tutaj
+            select: function(event, ui) {
+                $("#search-input").val(ui.item.value);
+                $(this).closest('form').submit();
+            }
+        });
+  });
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const fp = flatpickr("#flatpickr-input", {
+            locale: "pl",
+            dateFormat: "Y-m-d",
+            // To jest kluczowe - funkcja uruchamia się po kliknięciu w dzień
+            onChange: function(selectedDates, dateStr) {
+                if (dateStr) {
+                    console.log("Wybrano datę: " + dateStr); // Sprawdź to w F12
+                    
+                    // Budujemy nowy adres URL
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('date', dateStr);
+                    
+                    // Resetujemy stronę na 1, żeby nie było błędu paginacji
+                    url.searchParams.delete('page'); 
+                    
+                    // Przekierowanie
+                    window.location.href = url.href;
+                }
+            }
+        });
+
+        const trigger = document.getElementById('btn-trigger-cal');
+        if (trigger) {
+            trigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                fp.open();
+            });
+        }
+    });
+
+
+    flatpickr("#flatpickr-input", {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        onChange: function(selectedDates, dateStr) {
+            // Po wybraniu daty przeładuj stronę z nowym parametrem
+            window.location.href = "?date=" + dateStr;
+        }
+    });
+
+    // Sprawienie, by ikona kalendarza otwierała Flatpickr
+    document.getElementById('btn-trigger').addEventListener('click', function() {
+        document.getElementById('flatpickr-input')._flatpickr.open();
+    });
+</script>
+
+</body>
+</html>
+
+{% endblock %}

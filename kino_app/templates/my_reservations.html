@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .ticket-list-item {
+        background: #1f2833;
+        border-left: 5px solid #c46935;
+        transition: 0.3s;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .ticket-list-item:hover {
+        transform: translateX(10px);
+        background: #252e38;
+    }
+    .text-accent { color: #c46935; }
+    .text-info-custom { color: #66fcf1; }
+    .date-badge {
+        background: rgba(196, 105, 53, 0.1);
+        color: #c46935;
+        border: 1px solid #c46935;
+        font-weight: bold;
+    }
+
+
+    .ticket-details-label {
+    color: #c5c6c7 !important; /* Jasnoszary, dobrze widoczny na ciemnym tle */
+    font-size: 0.85rem;
+    }
+
+    .ticket-details-value {
+    color: #66fcf1 !important; /* Twój turkusowy kolor info-custom */
+    font-weight: bold;  
+    }
+
+    .ticket-list-item i {
+    color: #c46935; /* Twój pomarańczowy kolor akcentu dla ikon */
+    margin-right: 5px;
+    }
+
+    .badge.bg-dark.text-muted {
+    color: #66fcf1 !important; 
+    border-color: #45a29e !important;
+    background-color: rgba(69, 162, 158, 0.1) !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.7rem;
+}
+
+    h2.text-uppercase {
+    color: #ffffff !important; 
+    font-weight: 800 !important; 
+    letter-spacing: 5px !important; 
+    text-shadow: 0 0 20px rgba(102, 252, 241, 0.4); 
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+@media print {
+    /* Ukrywa przycisk drukowania i menu nawigacyjne na papierze */
+    .btn, nav, .navbar, footer {
+        display: none !important;
+    }
+    
+    /* Zapewnia, że tło biletów będzie białe (oszczędność tuszu) */
+    .ticket-list-item {
+        border: 1px solid #ddd !important;
+        background-color: white !important;
+        color: black !important;
+    }
+}
+</style>
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="text-uppercase fw-bold m-0">
+            <i class="bi bi-ticket-detailed me-2"></i>Moje Bilety
+        </h2>
+        <button onclick="window.print()" class="btn btn-outline-info rounded-pill px-4 shadow-sm">
+            <i class="bi bi-printer me-2"></i> DRUKUJ BILETY
+        </button>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            {% for res in reservations %}
+                <div class="ticket-list-item mb-3 p-4 shadow-sm">
+                    <div class="row align-items-center">
+                        <!-- Data i Godzina -->
+                        <div class="col-md-2 text-center mb-3 mb-md-0">
+                            <div class="date-badge p-2 rounded">
+                                <div class="small">{{ res.seans.start_time|date:"d.m" }}</div>
+                                <div class="h4 mb-0">{{ res.seans.start_time|date:"H:i" }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Dane filmu -->
+                        <div class="col-md-6">
+                            <h4 class="mb-1 text-white fw-bold">{{ res.seans.movie.title }}</h4>
+                            <div class="d-flex align-items-center">
+                                <div class="me-4">
+                                    <span style="color: #66fcf1; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block;">Sala</span>
+                                    <span class="text-white fw-bold">{{ res.seans.room_number|default:"Główna" }}</span>
+                                </div>
+
+                                <div class="ps-4 border-start border-secondary">
+                                    <span style="color: #c46935; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: block;">Miejsce</span>
+                                    <span class="text-white fw-bold">{{ res.seat_number }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Status i Kod QR -->
+                        <div class="col-md-4 text-md-end text-center mt-3 mt-md-0 d-flex flex-column align-items-md-end align-items-center justify-content-center">
+                            <!-- Status biletu -->
+                            <span class="badge mb-2 px-3" style="background-color: #0d4a50; color: #32d4e0; border: 1px solid #166d75;">
+                            OPŁACONO
+                            </span>
+
+                            <!-- Cena -->
+                            <p class="mb-2">
+                            <span style="color: #c46935; font-weight: bold; font-size: 1.1rem;">
+                                {{ res.price|default:"40.00" }} zł
+                            </span>
+                            </p>
+
+                            <!-- Kod QR  -->
+                            <div class="qr-container bg-white p-1 rounded shadow-sm me-md-2" 
+                                style="width: 75px; height: 75px; transition: transform 0.2s;"
+                                onmouseover="this.style.transform='scale(1.1)'" 
+                                onmouseout="this.style.transform='scale(1.0)'">
+                                <img src="data:image/png;base64,{{ res.get_qr_code }}" 
+                                    alt="QR" 
+                                    class="img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center py-5">
+                    <i class="bi bi-ticket-perforated text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+                    <p class="lead text-muted mt-3">Nie masz jeszcze żadnych rezerwacji.</p>
+                    <a href="{% url 'movie_list' %}" class="btn btn-primary rounded-pill mt-2">Przejdź do repertuaru</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
